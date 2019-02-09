@@ -28,29 +28,28 @@ app.get("/api/hello", function (req, res) {
 });
 
 // Timestamp microservice
-app.get('/api/timestamp/:dateVal', function(req, res, next){
+app.get('/api/timestamp/:dateVal?', function(req, res, next){
   // Gets the request data for date
   var dateVal = req.params.dateVal;
-  // Optiosn for formating date in natural date view
-  var dateFormatingOptions = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  };
 
-  if(isNaN(dateVal)){
-    var naturalDate = new Date(dateVal);
-    naturalDate = naturalDate.toLocaleDateString("en-us", dateFormatingOptions);
+  if(dateVal === undefined){
+    var utcDate = new Date();
+    utcDate = utcDate.toUTCString();
+    var unixDate = new Date().getTime()/1000;
+  }
+  else if(isNaN(dateVal)){
+    var utcDate = new Date(dateVal);
+    utcDate = utcDate.toUTCString();
     var unixDate = new Date(dateVal).getTime()/1000;
   }
   else
   {
     var unixDate = dateVal;
-    var naturalDate = new Date(dateVal *1000);
-    naturalDate = naturalDate.toLocaleDateString("en-us", dateFormatingOptions);
+    var utcDate = new Date(dateVal *1000);
+    utcDate = utcDate.toUTCString();
   }
 
-  res.json({unix: unixDate, natural: naturalDate});
+res.json({unix: unixDate, utc: utcDate});
 });
 
 
